@@ -19,8 +19,8 @@ public:
 	velStruct vel{ 0.0F , 0.0F };
 	posStruct pos{ 0.0F , 0.0F };
 	bool hittedLastStep = false;
-private:
 	const float mass = 0.0F;
 	const float radius = 0.0F;
+private:
 };
 

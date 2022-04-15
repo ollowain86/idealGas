@@ -1,0 +1,3 @@
+C:\gitRepos\idealGas\x64\Debug\gasParticleSimulation.pdb
+C:\gitRepos\idealGas\gasParticleSimulation\x64\Debug\gasParticleSimulation.exe
+C:\gitRepos\idealGas\gasParticleSimulation\x64\Debug\gasParticleSimulation.pdb

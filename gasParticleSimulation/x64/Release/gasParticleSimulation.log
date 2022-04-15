@@ -1,0 +1,7 @@
+﻿  GasParticle.cpp
+  main.cpp
+  simulation.cpp
+C:\gitRepos\idealGas\gasParticleSimulation\simulation.cpp(46,108): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  WorldClass.cpp
+simulation.obj : error LNK2005: "float particleDistance" (?particleDistance@@3MA) already defined in main.obj
+C:\gitRepos\idealGas\x64\Release\gasParticleSimulation.exe : fatal error LNK1169: one or more multiply defined symbols found
