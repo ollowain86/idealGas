@@ -1,5 +1,2 @@
-﻿  main.cpp
-  simulation.cpp
-C:\gitRepos\idealGas\gasParticleSimulation\simulation.cpp(47,108): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-  Generating Code...
+﻿  simulation.cpp
   gasParticleSimulation.vcxproj -> C:\gitRepos\idealGas\x64\Debug\gasParticleSimulation.exe

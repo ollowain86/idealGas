@@ -11,3 +11,5 @@ void distributeParticle2D(std::vector<GasParticle>& gasParticleContainer, const 
 void runSimulation(const float totalTime, const float deltaTime);
 
 void moveParticle(std::vector<GasParticle>& gasParticleContainer, const float deltaTime);
+
+void calcElasticCollision(GasParticle & firstGasParticle, GasParticle & secondGasParticle);

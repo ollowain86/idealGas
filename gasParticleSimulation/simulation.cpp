@@ -7,6 +7,12 @@
 
 std::vector<GasParticle> gasParticleContainer;
 float particleDistance = -1.0;
+float velVecLengthFirst = -1.0;
+float velVecLengthSecond = -1.0;
+float angleVelVecFirstCentralLine = -1.0;
+float angleVelVecSecondCentralLine = -1.0;
+float centralLineLength = -1.0;
+posStruct centralLine = { 0.0, 0.0 };
 
 void distributeParticle2D(std::vector<GasParticle> & gasParticleContainer, const uint32_t i_totalNumPart, const float i_worldSideLength)
 {
@@ -35,6 +41,17 @@ void initSimulation(const uint32_t i_totalNumPart, const float i_worldSideLength
 	distributeParticle2D(gasParticleContainer, i_totalNumPart, i_worldSideLength);
 }
 
+void calcElasticCollision(GasParticle& firstGasParticle, GasParticle& secondGasParticle)
+{
+	velVecLengthFirst = std::sqrt((firstGasParticle.vel.velX * firstGasParticle.vel.velX) + (firstGasParticle.vel.velY * firstGasParticle.vel.velY));
+	velVecLengthSecond = std::sqrt((secondGasParticle.vel.velX * secondGasParticle.vel.velX) + (secondGasParticle.vel.velY * secondGasParticle.vel.velY));
+	centralLine.xPos = secondGasParticle.pos.xPos - firstGasParticle.pos.xPos;
+	centralLine.yPos = secondGasParticle.pos.yPos - firstGasParticle.pos.yPos;
+	centralLineLength = std::sqrt((centralLine.xPos * centralLine.xPos) + (centralLine.yPos * centralLine.yPos));
+
+	angleVelVecFirstCentralLine = ((centralLine.xPos * firstGasParticle.pos.xPos) + (centralLine.yPos * firstGasParticle.pos.yPos));
+}
+
 void moveParticle(std::vector<GasParticle>& gasParticleContainer, const float deltaTime)
 {
 	for (size_t i = 0; i < gasParticleContainer.size(); i++)
@@ -44,11 +61,15 @@ void moveParticle(std::vector<GasParticle>& gasParticleContainer, const float de
 		// check if particle_i hitted a particle_j
 		for (size_t j = 0; j < gasParticleContainer.size(); j++)
 		{
-			particleDistance = std::pow((gasParticleContainer[i].pos.xPos - gasParticleContainer[j].pos.xPos), 2.0) + std::pow((gasParticleContainer[i].pos.yPos - gasParticleContainer[j].pos.yPos), 2.0);
-			particleDistance = std::sqrt(particleDistance);
-			if (particleDistance<(gasParticleContainer[i].radius+ gasParticleContainer[j].radius))
+			particleDistance = static_cast<float>(std::pow((gasParticleContainer[i].pos.xPos - gasParticleContainer[j].pos.xPos), 2.0) + std::pow((gasParticleContainer[i].pos.yPos - gasParticleContainer[j].pos.yPos), 2.0));
+			particleDistance = static_cast<float>(std::sqrt(particleDistance));
+			if (particleDistance<(gasParticleContainer[i].radius + gasParticleContainer[j].radius))
 			{
-				//voll-elasitscher Stoß
+				// check if they are not the same particle
+				if (i != j)
+				{
+					calcElasticCollision(gasParticleContainer[i], gasParticleContainer[j]);
+				}
 			}
 		}
 	}
