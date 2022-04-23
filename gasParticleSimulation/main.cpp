@@ -5,7 +5,7 @@
 
 int main()
 {
-	const uint32_t totalNumPart = 10U;
+	const uint32_t totalNumPart = 2U;
 	const float worldSideLength = 10;
 	const float totalTime = 3.0F;
 	const float deltaTime = 1.0F;

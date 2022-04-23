@@ -18,3 +18,5 @@ void calcElasticCollision(GasParticle & firstGasParticle, GasParticle & secondGa
 float distanceCal(posStruct & posA, posStruct & posB);
 
 bool hasHitted(const int i, const GasParticle & particle_i, const std::vector<GasParticle>& gasParticleContainer, int & j);
+
+float vecLengthsCalc2d();

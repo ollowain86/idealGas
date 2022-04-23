@@ -41,10 +41,15 @@ void initSimulation(const uint32_t i_totalNumPart, const float i_worldSideLength
 	distributeParticle2D(gasParticleContainer, i_totalNumPart, i_worldSideLength);
 }
 
+float vecLengthsCalc2d(velStruct & vel)
+{
+	return std::sqrt((vel.velX * vel.velX) + (vel.velY * vel.velY));
+}
+
 void calcElasticCollision(GasParticle& firstGasParticle, GasParticle& secondGasParticle)
 {
-	velVecLengthFirst = std::sqrt((firstGasParticle.vel.velX * firstGasParticle.vel.velX) + (firstGasParticle.vel.velY * firstGasParticle.vel.velY));
-	velVecLengthSecond = std::sqrt((secondGasParticle.vel.velX * secondGasParticle.vel.velX) + (secondGasParticle.vel.velY * secondGasParticle.vel.velY));
+	velVecLengthFirst = vecLengthsCalc2d(firstGasParticle.vel);
+	velVecLengthSecond = vecLengthsCalc2d(secondGasParticle.vel);
 	centralLine.xPos = secondGasParticle.pos.xPos - firstGasParticle.pos.xPos;
 	centralLine.yPos = secondGasParticle.pos.yPos - firstGasParticle.pos.yPos;
 	centralLineLength = std::sqrt((centralLine.xPos * centralLine.xPos) + (centralLine.yPos * centralLine.yPos));
@@ -62,11 +67,10 @@ bool hasHitted(const int i, const GasParticle & particle_i, const std::vector<Ga
 	// check if particle_i hitted a particle_j
 	for (size_t j = 0; j < gasParticleContainer.size(); j++)
 	{
-		particleDistance = distanceCal(particle_i.pos, gasParticleContainer[j].pos);
-
 		// check if i & j are not the same particle
 		if (i != j)
 		{
+			particleDistance = distanceCal(particle_i.pos, gasParticleContainer[j].pos);
 			if (particleDistance < (particle_i.radius + gasParticleContainer[j].radius))
 			{
 				particleNo_j = j;
@@ -90,6 +94,17 @@ void moveParticle(std::vector<GasParticle>& gasParticleContainer, const float de
 		gasParticleContainer[i].pos.xPos += gasParticleContainer[i].vel.velX * deltaTime;
 		gasParticleContainer[i].pos.yPos += gasParticleContainer[i].vel.velY * deltaTime;
 		
+		// zum Testen
+		gasParticleContainer[0].pos.xPos = 0.0;
+		gasParticleContainer[0].pos.yPos = 0.0;
+		gasParticleContainer[0].vel.velX = 1.0;
+		gasParticleContainer[0].vel.velY = 1.0;
+
+		gasParticleContainer[1].pos.xPos = 1.999;
+		gasParticleContainer[1].pos.yPos = 0.0;
+		gasParticleContainer[1].vel.velX = -1.0;
+		gasParticleContainer[1].vel.velY = -1.0;
+
 		// check if a hit has taken place
 		if (hasHitted(i, gasParticleContainer[i], gasParticleContainer, particle_j))
 		{
