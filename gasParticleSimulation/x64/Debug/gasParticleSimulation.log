@@ -1,2 +1,4 @@
-﻿  simulation.cpp
+﻿  main.cpp
+  simulation.cpp
+  Generating Code...
   gasParticleSimulation.vcxproj -> C:\gitRepos\idealGas\x64\Debug\gasParticleSimulation.exe

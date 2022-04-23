@@ -52,25 +52,48 @@ void calcElasticCollision(GasParticle& firstGasParticle, GasParticle& secondGasP
 	angleVelVecFirstCentralLine = ((centralLine.xPos * firstGasParticle.pos.xPos) + (centralLine.yPos * firstGasParticle.pos.yPos));
 }
 
+float distanceCal(const posStruct & posA, const posStruct & posB)
+{
+	return (static_cast<float>(std::sqrt(std::pow((posA.xPos - posB.xPos), 2.0) + std::pow((posA.yPos - posB.yPos), 2.0))));
+}
+
+bool hasHitted(const int i, const GasParticle & particle_i, const std::vector<GasParticle>& gasParticleContainer, int& particleNo_j)
+{
+	// check if particle_i hitted a particle_j
+	for (size_t j = 0; j < gasParticleContainer.size(); j++)
+	{
+		particleDistance = distanceCal(particle_i.pos, gasParticleContainer[j].pos);
+
+		// check if i & j are not the same particle
+		if (i != j)
+		{
+			if (particleDistance < (particle_i.radius + gasParticleContainer[j].radius))
+			{
+				particleNo_j = j;
+				return true;
+			}
+			else
+			{
+				particleNo_j = -1;
+				return false;
+			}
+		}
+	}
+}
+
 void moveParticle(std::vector<GasParticle>& gasParticleContainer, const float deltaTime)
 {
+	int particle_j = -1;
 	for (size_t i = 0; i < gasParticleContainer.size(); i++)
 	{
+		//moving particle i by vel*dt
 		gasParticleContainer[i].pos.xPos += gasParticleContainer[i].vel.velX * deltaTime;
 		gasParticleContainer[i].pos.yPos += gasParticleContainer[i].vel.velY * deltaTime;
-		// check if particle_i hitted a particle_j
-		for (size_t j = 0; j < gasParticleContainer.size(); j++)
+		
+		// check if a hit has taken place
+		if (hasHitted(i, gasParticleContainer[i], gasParticleContainer, particle_j))
 		{
-			particleDistance = static_cast<float>(std::pow((gasParticleContainer[i].pos.xPos - gasParticleContainer[j].pos.xPos), 2.0) + std::pow((gasParticleContainer[i].pos.yPos - gasParticleContainer[j].pos.yPos), 2.0));
-			particleDistance = static_cast<float>(std::sqrt(particleDistance));
-			if (particleDistance<(gasParticleContainer[i].radius + gasParticleContainer[j].radius))
-			{
-				// check if they are not the same particle
-				if (i != j)
-				{
-					calcElasticCollision(gasParticleContainer[i], gasParticleContainer[j]);
-				}
-			}
+			calcElasticCollision(gasParticleContainer[i], gasParticleContainer[particle_j]);
 		}
 	}
 }
