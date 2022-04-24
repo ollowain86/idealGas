@@ -41,18 +41,30 @@ void initSimulation(const uint32_t i_totalNumPart, const float i_worldSideLength
 	distributeParticle2D(gasParticleContainer, i_totalNumPart, i_worldSideLength);
 }
 
-float vecLengthsCalc2d(velStruct & vel)
+float vecLengthsCalc2d(float& val1, float & val2)
 {
-	return std::sqrt((vel.velX * vel.velX) + (vel.velY * vel.velY));
+	return std::sqrt((val1 * val1) + (val2 * val2));
+}
+
+float scalarProduct2d(float& valA1, float& valA2, float& valB1, float& valB2)
+{
+	return (valA1 * valB1 + valA2 * valB2);
+}
+
+float cosBetween2Vecs(float& valA1, float& valA2, float& valB1, float& valB2)
+{
+	return(scalarProduct2d(valA1, valA2, valB1, valB2)/(vecLengthsCalc2d(valA1, valA2)*vecLengthsCalc2d(valB1, valB2)));
 }
 
 void calcElasticCollision(GasParticle& firstGasParticle, GasParticle& secondGasParticle)
 {
-	velVecLengthFirst = vecLengthsCalc2d(firstGasParticle.vel);
-	velVecLengthSecond = vecLengthsCalc2d(secondGasParticle.vel);
+	velVecLengthFirst = vecLengthsCalc2d(firstGasParticle.vel.velX, firstGasParticle.vel.velY);
+	velVecLengthSecond = vecLengthsCalc2d(secondGasParticle.vel.velX, secondGasParticle.vel.velY);
+
 	centralLine.xPos = secondGasParticle.pos.xPos - firstGasParticle.pos.xPos;
 	centralLine.yPos = secondGasParticle.pos.yPos - firstGasParticle.pos.yPos;
-	centralLineLength = std::sqrt((centralLine.xPos * centralLine.xPos) + (centralLine.yPos * centralLine.yPos));
+
+	centralLineLength = vecLengthsCalc2d(centralLine.xPos, centralLine.yPos);
 
 	angleVelVecFirstCentralLine = ((centralLine.xPos * firstGasParticle.pos.xPos) + (centralLine.yPos * firstGasParticle.pos.yPos));
 }
