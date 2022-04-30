@@ -7,11 +7,10 @@
 
 std::vector<GasParticle> gasParticleContainer;
 float particleDistance = -1.0;
-float velVecLengthFirst = -1.0;
-float velVecLengthSecond = -1.0;
-float angleVelVecFirstCentralLine = -1.0;
-float angleVelVecSecondCentralLine = -1.0;
-float centralLineLength = -1.0;
+float cosVel1VecCentral = 0.0;
+float sinVel1VecCentral = 0.0;
+float cosVel2VecCentral = 0.0;
+float sinVel2VecCentral = 0.0;
 posStruct centralLine = { 0.0, 0.0 };
 
 void distributeParticle2D(std::vector<GasParticle> & gasParticleContainer, const uint32_t i_totalNumPart, const float i_worldSideLength)
@@ -21,16 +20,15 @@ void distributeParticle2D(std::vector<GasParticle> & gasParticleContainer, const
 	std::uniform_real_distribution<> disPos(-i_worldSideLength / 2.0, i_worldSideLength / 2.0);
 	std::uniform_real_distribution<> disVel(-1.0, 1.0);
 	
-	float xPos, yPos;
-	float velX, velY;
+	float xVal, yVal;
 	for (size_t i = 0; i < i_totalNumPart; i++)
 	{
-		xPos = static_cast<float>(disPos(gen));
-		yPos = static_cast<float>(disPos(gen));
-		velX = static_cast<float>(disVel(gen));
-		velY = static_cast<float>(disVel(gen));
-		velStruct vel{velX, velY};
-		posStruct pos{ xPos, yPos };
+		xVal = static_cast<float>(disPos(gen));
+		yVal = static_cast<float>(disPos(gen));
+		xVal = static_cast<float>(disVel(gen));
+		yVal = static_cast<float>(disVel(gen));
+		velStruct vel{xVal, yVal};
+		posStruct pos{ xVal, yVal };
 		GasParticle tmp_particle{ 1.0, 1.0, vel, pos };
 		gasParticleContainer.push_back(tmp_particle);
 	}
@@ -41,37 +39,48 @@ void initSimulation(const uint32_t i_totalNumPart, const float i_worldSideLength
 	distributeParticle2D(gasParticleContainer, i_totalNumPart, i_worldSideLength);
 }
 
-float vecLengthsCalc2d(float& val1, float & val2)
+float vecLengthsCalc2d(vec2d & vec)
 {
-	return std::sqrt((val1 * val1) + (val2 * val2));
+	return std::sqrt(vec.xVal*vec.xVal + vec.yVal*vec.yVal);
 }
 
-float scalarProduct2d(float& valA1, float& valA2, float& valB1, float& valB2)
+float scalarProduct2d(vec2d& vec1, vec2d& vec2)
 {
-	return (valA1 * valB1 + valA2 * valB2);
+	// a1*b1+a2*b2
+	return (vec1.xVal*vec2.xVal+ vec1.yVal * vec2.yVal);
 }
 
-float cosBetween2Vecs(float& valA1, float& valA2, float& valB1, float& valB2)
+float cosBetween2Vecs(vec2d& vec1, vec2d& vec2)
 {
-	return(scalarProduct2d(valA1, valA2, valB1, valB2)/(vecLengthsCalc2d(valA1, valA2)*vecLengthsCalc2d(valB1, valB2)));
+	// a*b/(|a|*|b|)
+	return(scalarProduct2d(vec1, vec2)/(vec1.length * vec2.length));
+}
+
+float sinBetween2Vecs(vec2d& vec1, vec2d& vec2)
+{
+	// |axb|/(|a|*|b|)
+	return ((vec1.xVal * vec2.yVal - vec1.yVal * vec2.xVal)/(vec1.length*vec2.length));
 }
 
 void calcElasticCollision(GasParticle& firstGasParticle, GasParticle& secondGasParticle)
 {
-	velVecLengthFirst = vecLengthsCalc2d(firstGasParticle.vel.velX, firstGasParticle.vel.velY);
-	velVecLengthSecond = vecLengthsCalc2d(secondGasParticle.vel.velX, secondGasParticle.vel.velY);
+	firstGasParticle.vel.length = vecLengthsCalc2d(firstGasParticle.vel);
+	secondGasParticle.vel.length = vecLengthsCalc2d(secondGasParticle.vel);
 
-	centralLine.xPos = secondGasParticle.pos.xPos - firstGasParticle.pos.xPos;
-	centralLine.yPos = secondGasParticle.pos.yPos - firstGasParticle.pos.yPos;
+	centralLine.xVal = secondGasParticle.pos.xVal - firstGasParticle.pos.xVal;
+	centralLine.yVal = secondGasParticle.pos.yVal - firstGasParticle.pos.yVal;
+	centralLine.length = vecLengthsCalc2d(centralLine);
 
-	centralLineLength = vecLengthsCalc2d(centralLine.xPos, centralLine.yPos);
+	cosVel1VecCentral = cosBetween2Vecs(firstGasParticle.vel, centralLine);
+	sinVel1VecCentral = sinBetween2Vecs(firstGasParticle.vel, centralLine);
 
-	angleVelVecFirstCentralLine = ((centralLine.xPos * firstGasParticle.pos.xPos) + (centralLine.yPos * firstGasParticle.pos.yPos));
+	cosVel2VecCentral = cosBetween2Vecs(secondGasParticle.vel, centralLine);
+	sinVel2VecCentral = sinBetween2Vecs(secondGasParticle.vel, centralLine);
 }
 
 float distanceCal(const posStruct & posA, const posStruct & posB)
 {
-	return (static_cast<float>(std::sqrt(std::pow((posA.xPos - posB.xPos), 2.0) + std::pow((posA.yPos - posB.yPos), 2.0))));
+	return (static_cast<float>(std::sqrt(std::pow((posA.xVal - posB.xVal), 2.0) + std::pow((posA.yVal - posB.yVal), 2.0))));
 }
 
 bool hasHitted(const int i, const GasParticle & particle_i, const std::vector<GasParticle>& gasParticleContainer, int& particleNo_j)
@@ -103,19 +112,19 @@ void moveParticle(std::vector<GasParticle>& gasParticleContainer, const float de
 	for (size_t i = 0; i < gasParticleContainer.size(); i++)
 	{
 		//moving particle i by vel*dt
-		gasParticleContainer[i].pos.xPos += gasParticleContainer[i].vel.velX * deltaTime;
-		gasParticleContainer[i].pos.yPos += gasParticleContainer[i].vel.velY * deltaTime;
+		gasParticleContainer[i].pos.xVal += gasParticleContainer[i].vel.xVal * deltaTime;
+		gasParticleContainer[i].pos.yVal += gasParticleContainer[i].vel.yVal * deltaTime;
 		
 		// zum Testen
-		gasParticleContainer[0].pos.xPos = 0.0;
-		gasParticleContainer[0].pos.yPos = 0.0;
-		gasParticleContainer[0].vel.velX = 1.0;
-		gasParticleContainer[0].vel.velY = 1.0;
+		gasParticleContainer[0].pos.xVal = 2.0;
+		gasParticleContainer[0].pos.yVal = 2.0;
+		gasParticleContainer[0].vel.xVal = 2.0;
+		gasParticleContainer[0].vel.yVal = 1.0;
 
-		gasParticleContainer[1].pos.xPos = 1.999;
-		gasParticleContainer[1].pos.yPos = 0.0;
-		gasParticleContainer[1].vel.velX = -1.0;
-		gasParticleContainer[1].vel.velY = -1.0;
+		gasParticleContainer[1].pos.xVal = 3.0;
+		gasParticleContainer[1].pos.yVal = 3.732;
+		gasParticleContainer[1].vel.xVal = -2.0;
+		gasParticleContainer[1].vel.yVal = 1.0;
 
 		// check if a hit has taken place
 		if (hasHitted(i, gasParticleContainer[i], gasParticleContainer, particle_j))

@@ -1,16 +1,14 @@
 #pragma once
 
-struct velStruct
+struct vec2d
 {
-	float velX;
-	float velY;
+	float xVal;
+	float yVal;
+	float length;
 };
 
-struct posStruct
-{
-	float xPos;
-	float yPos;
-};
+using velStruct = vec2d;
+using posStruct = vec2d;
 
 class GasParticle
 {

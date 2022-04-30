@@ -19,8 +19,12 @@ float distanceCal(posStruct & posA, posStruct & posB);
 
 bool hasHitted(const int i, const GasParticle & particle_i, const std::vector<GasParticle>& gasParticleContainer, int & j);
 
-float vecLengthsCalc2d(float& val1, float& val2);
+float vecLengthsCalc2d(vec2d& vec);
 
-float scalarProduct2d(float& valA1, float& valA2, float& valB1, float& valB2);
+float scalarProduct2d(vec2d& vec1, vec2d& vec2);
 
-float cosBetween2Vecs(float& valA1, float& valA2, float& valB1, float& valB2);
+float cosBetween2Vecs(vec2d& vec1, vec2d& vec2);
+
+float sinBetween2Vecs(vec2d& vec1, vec2d& vec2);
+
+float crossProductBetween2Vecs(vec2d& vec1, vec2d& vec2);
