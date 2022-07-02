@@ -1,9 +1,4 @@
-﻿  GasParticle.cpp
-  main.cpp
-  simulation.cpp
-C:\gitRepos\idealGas\gasParticleSimulation\simulation.cpp(97,21): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\gitRepos\idealGas\gasParticleSimulation\simulation.cpp(125,43): warning C4305: '=': truncation from 'double' to 'float'
-C:\gitRepos\idealGas\gasParticleSimulation\simulation.cpp(130,6): warning C4267: 'argument': conversion from 'size_t' to 'const int', possible loss of data
-  Generating Code...
-C:\gitRepos\idealGas\gasParticleSimulation\simulation.cpp(107): warning C4715: 'hasHitted': not all control paths return a value
+﻿  main.cpp
+C:\gitRepos\idealGas\gasParticleSimulation\main.cpp(10,40): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\gitRepos\idealGas\gasParticleSimulation\main.cpp(13,51): warning C4305: 'initializing': truncation from 'double' to 'float'
   gasParticleSimulation.vcxproj -> C:\gitRepos\idealGas\x64\Debug\gasParticleSimulation.exe

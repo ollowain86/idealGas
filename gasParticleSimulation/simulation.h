@@ -4,27 +4,54 @@
 #include <iostream>
 #include "GasParticle.h"
 
-void initSimulation(const uint32_t i_totalNumPart, const float i_worldSideLength);
+class Simulation
+{
+public:
 
-void distributeParticle2D(std::vector<GasParticle>& gasParticleContainer, const uint32_t i_totalNumPart, const float i_worldSideLength);
+	bool surfaceCheck(const float i_totalNumPart, const float i_maxSurfaceRatioCirclesRectangle, const float i_worldSideLength, const float i_particleRadius, const float i_deltaRadiustoRadius);
 
-void runSimulation(const float totalTime, const float deltaTime);
+	bool initSimulation(const uint32_t i_totalNumPart, const float i_worldSideLength, const float i_binSize, const float i_deltaRadiustoRadius, const float i_particleRadius, const float i_maxSurfaceRatioCirclesRectangle);
 
-void moveParticle(std::vector<GasParticle>& gasParticleContainer, const float deltaTime);
+	void distributeParticle2D(std::vector<GasParticle>& gasParticleContainer, const uint32_t i_totalNumPart, const float deltaRadiustoRadius, const float i_particleRadius);
 
-void calcElasticCollision(GasParticle & firstGasParticle, GasParticle & secondGasParticle);
+	void runSimulation(const float totalTime);
 
-// distance calc between two points: input point a (x & y pos), b (x & y pos)
-float distanceCal(posStruct & posA, posStruct & posB);
+	void moveParticle(std::vector<GasParticle>& gasParticleContainer, const float deltaTime);
 
-bool hasHitted(const int i, const GasParticle & particle_i, const std::vector<GasParticle>& gasParticleContainer, int & j);
+	void calcElasticCollision(GasParticle& firstGasParticle, GasParticle& secondGasParticle);
 
-float vecLengthsCalc2d(vec2d& vec);
+	// distance calc between two points: input point a (x & y pos), b (x & y pos)
+	float distanceCal(const posStruct& posA, const posStruct& posB);
 
-float scalarProduct2d(vec2d& vec1, vec2d& vec2);
+	bool hasHitted(const int i, const GasParticle& particle_i, const std::vector<GasParticle>& gasParticleContainer, int& j);
 
-float cosBetween2Vecs(vec2d& vec1, vec2d& vec2);
+	float vecLengthsCalc2d(vec2d& vec);
 
-float sinBetween2Vecs(vec2d& vec1, vec2d& vec2);
+	float scalarProduct2d(vec2d& vec1, vec2d& vec2);
 
-float crossProductBetween2Vecs(vec2d& vec1, vec2d& vec2);
+	void calcTotalEnergy(std::vector<GasParticle>& gasParticleContainer);
+
+	void calcVelDistr(std::vector<GasParticle>& gasParticleContainer);
+
+	void printVelDistr(const std::vector<float>& velDistrArray);
+
+	void setParameters(const float i_worldSideLength, const float i_binSize, const float i_deltaRadiustoRadius);
+	
+	bool hasHittedWall(const GasParticle& particle_i);
+
+	void calcElasticCollisionWithWall(GasParticle& particle_i);
+
+	void calcDeltaTime(const std::vector<GasParticle>& gasParticleContainer, float & deltaTime);
+
+	float m_worldSideLength = 0.0F;
+	float m_halfWorldSideLength = 0.0F;
+	float m_velDistrBinSize = 0.0F;
+	float m_deltaRadiustoRadius = 0.0F;
+	enum class wallSide
+	{
+		rightSide,
+		upperSide,
+		leftSide,
+		lowerSide
+	}m_wallSide;
+};

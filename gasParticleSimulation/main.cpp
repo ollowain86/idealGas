@@ -5,14 +5,21 @@
 
 int main()
 {
-	const uint32_t totalNumPart = 2U;
-	const float worldSideLength = 10;
-	const float totalTime = 3.0F;
-	const float deltaTime = 1.0F;
+	const uint32_t totalNumPart = 10U;
+	const float worldSideLength = 100.0F;
+	const float deltaRadiustoRadius = 0.01;
+	const float particleRadius = 5.0F;
+	const float totalTime = 1.0F;
+	const float maxSurfaceRatioCirclesRectangle = 0.4; // circle to surface max ~0.8 (80%)
+	const float velBinSize = 0.1F; //bin of vel distr
 
-	initSimulation(totalNumPart, worldSideLength);
-	runSimulation(totalTime, deltaTime);
+	Simulation sim;
 
-	getchar();
+	// run simulation only if init simulation was successful
+	if (!sim.initSimulation(totalNumPart, worldSideLength, velBinSize, deltaRadiustoRadius, particleRadius, maxSurfaceRatioCirclesRectangle))
+	{
+		sim.runSimulation(totalTime);
+	}
+	
 	return 0;
 }
