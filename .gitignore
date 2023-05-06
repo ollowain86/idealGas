@@ -63,6 +63,7 @@ StyleCopReport.xml
 *_h.h
 *.ilk
 *.meta
+*.vcxproj
 *.obj
 *.iobj
 *.pch
@@ -332,3 +333,12 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+gasParticleSimulation/gasParticleSimulation.vcxproj
+*.vcxproj
+*.tlog
+*.obj
+*.pdb
+*.log
+*.tlog
+*.lastbuildstate
+.vs/gasParticleSimulation/v16/.suo
