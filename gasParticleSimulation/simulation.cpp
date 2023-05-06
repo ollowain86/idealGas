@@ -333,7 +333,7 @@ void Simulation::calcDeltaTime(const std::vector<GasParticle>& gasParticleContai
 void Simulation::runSimulation(const float totalTime)
 {
 	// set sfml parameters
-	sf::RenderWindow window(sf::VideoMode(200, 200), "Ideal Gas 2D by Fatih Turan");
+	sf::RenderWindow window(sf::VideoMode(m_worldSideLength, m_worldSideLength), "Ideal Gas 2D by Fatih Turan");
 	sf::Event event;
 	//window.setFramerateLimit(24);
 	std::vector<sf::CircleShape> visualGasContainer(gasParticleContainer.size());

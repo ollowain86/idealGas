@@ -1,9 +1,14 @@
-﻿  simulation.cpp
-C:\gitRepos\idealGas\gasParticleSimulation\simulation.cpp(76,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\gitRepos\idealGas\gasParticleSimulation\simulation.cpp(88,19): warning C4244: 'argument': conversion from 'const uint32_t' to 'const float', possible loss of data
-  Generating code
-  1 of 178 functions ( 0.6%) were compiled, the rest were copied from previous compilation.
+﻿  main.cpp
+C:\Fatih\Repository\idealGas\gasParticleSimulation\main.cpp(10,40): warning C4305: "Initialisierung": Verkürzung von "double" in "float"
+C:\Fatih\Repository\idealGas\gasParticleSimulation\main.cpp(13,51): warning C4305: "Initialisierung": Verkürzung von "double" in "float"
+  simulation.cpp
+C:\Fatih\Repository\idealGas\gasParticleSimulation\simulation.cpp(76,14): warning C4244: "Initialisierung": Konvertierung von "double" in "float", möglicher Datenverlust
+C:\Fatih\Repository\idealGas\gasParticleSimulation\simulation.cpp(88,19): warning C4244: "Argument": Konvertierung von "const uint32_t" in "const float", möglicher Datenverlust
+C:\Fatih\Repository\idealGas\gasParticleSimulation\simulation.cpp(336,59): warning C4244: "Argument": Konvertierung von "float" in "unsigned int", möglicher Datenverlust
+C:\Fatih\Repository\idealGas\gasParticleSimulation\simulation.cpp(336,40): warning C4244: "Argument": Konvertierung von "float" in "unsigned int", möglicher Datenverlust
+  Code wird generiert.
+  2 of 180 functions ( 1.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-  gasParticleSimulation.vcxproj -> C:\gitRepos\idealGas\x64\Release\gasParticleSimulation.exe
+    0 functions had inline decision re-evaluated but remain unchanged
+  Codegenerierung ist abgeschlossen.
+  gasParticleSimulation.vcxproj -> C:\Fatih\Repository\idealGas\x64\Release\gasParticleSimulation.exe

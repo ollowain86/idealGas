@@ -5,8 +5,8 @@
 
 int main()
 {
-	const uint32_t totalNumPart = 10U;
-	const float worldSideLength = 100.0F;
+	const uint32_t totalNumPart = 100U;
+	const float worldSideLength = 1000.0F;
 	const float deltaRadiustoRadius = 0.01;
 	const float particleRadius = 5.0F;
 	const float totalTime = 1.0F;
