@@ -21,44 +21,62 @@ size_t velDistrArraySize = 0U;
 std::vector<float> velDistrArray;
 float kB = 1.380649e-23f; // boltmann constant
 
-void Simulation::distributeParticle2D(std::vector<GasParticle> & gasParticleContainer, const uint32_t i_totalNumPart, const float i_deltaRadiustoRadius, const float i_particleRadius)
+/*
+void Simulation::reDistributePos(GasParticle & tmp_particle, const std::vector<GasParticle>& gasParticleContainer, const float i_deltaRadiustoRadius)
 {
 	std::random_device rd;  //Will be used to obtain a seed for the random number engine
 	std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
 	std::uniform_real_distribution<> disPos(-m_worldSideLength / 2.0, m_worldSideLength / 2.0);
+	float xVal, yVal;
+	xVal = static_cast<float>(disPos(gen));
+	yVal = static_cast<float>(disPos(gen));
+	posStruct pos{ xVal, yVal };
+
+	while ()
+	{
+
+	}
+}
+*/
+
+void Simulation::distributeParticle2D(std::vector<GasParticle> & gasParticleContainer, const uint32_t i_totalNumPart, const float i_deltaRadiustoRadius, const float i_particleRadius)
+{	
+	std::random_device rd;  //Will be used to obtain a seed for the random number engine
+	std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
+	std::uniform_real_distribution<> disPos(-m_worldSideLength / 2.0, m_worldSideLength / 2.0);
 	std::uniform_real_distribution<> disVel(-1.0, 1.0);
-	
 	float xVal, yVal;
 
-	// shall stop while loop
-	size_t protectCounter = 10000U;
-	size_t counter = 0U;
 	for (size_t i = 0; i < i_totalNumPart; i++)
 	{
-		/*
-		while (counter < protectCounter)
-		{
-			
-			for (size_t i = 0; i < gasParticleContainer.size(); i++)
-			{
-				if (distanceCal(pos, gasParticleContainer))
-				{
-
-				}
-			}
-			counter++;
-		}
-		*/
 		xVal = static_cast<float>(disPos(gen));
 		yVal = static_cast<float>(disPos(gen));
 		posStruct pos{ xVal, yVal };
+		//reuse xVal, yVal
 		xVal = static_cast<float>(disVel(gen));
 		yVal = static_cast<float>(disVel(gen));
-		// ToDo what should be vel?
+		// ToDo what should be vel? Here it depends on the world size
 		velStruct vel{ xVal * m_worldSideLength / 10.0f, yVal * m_worldSideLength / 10.0f };
 		GasParticle tmp_particle{ 1.0, i_particleRadius, i_particleRadius * i_deltaRadiustoRadius, vel, pos };
 		gasParticleContainer.push_back(tmp_particle);
 	}
+
+	// check if there is a overlap. If overlap try to reassign a new position with a protective while loop
+	for (size_t i = 0; i < i_totalNumPart; i++)
+	{
+		for (size_t j = 0; j < i_totalNumPart; j++)
+		{
+			if (i != j)
+			{
+				// if distance < (radiusA + radiusB) * deltaRadiusToRadius
+				if (distanceCal(gasParticleContainer[i].pos, gasParticleContainer[j].pos) < ((gasParticleContainer[i].radius + gasParticleContainer[j].radius)  * i_deltaRadiustoRadius))
+				{
+					//repositioning of particle i
+				}
+			}
+		}
+	}
+	size_t thresholdReAssignPosition = 10U;
 }
 
 void Simulation::setParameters(const float i_worldSideLength, const float i_binSize, const float i_deltaRadiustoRadius)
@@ -69,11 +87,11 @@ void Simulation::setParameters(const float i_worldSideLength, const float i_binS
 	m_deltaRadiustoRadius = i_deltaRadiustoRadius;
 }
 
-bool Simulation::surfaceCheck(const float i_totalNumPart, const float i_maxSurfaceRatioCirclesRectangle, const float i_worldSideLength, const float i_particleRadius, const float i_deltaRadiustoRadius)
+bool Simulation::surfaceCheck(const uint32_t i_totalNumPart, const float i_maxSurfaceRatioCirclesRectangle, const float i_worldSideLength, const float i_particleRadius, const float i_deltaRadiustoRadius)
 {
 	bool tooManyParticles = true;
 	// for all circle radii are the same
-	float ratio = i_totalNumPart * M_PI * (i_particleRadius+i_deltaRadiustoRadius)/ (i_worldSideLength * i_worldSideLength);
+	float ratio = static_cast<float>(i_totalNumPart) * M_PI * ((i_particleRadius+i_deltaRadiustoRadius) * (i_particleRadius + i_deltaRadiustoRadius)) / (i_worldSideLength * i_worldSideLength); // N*(pi*r^2)/(surface world)
 	if (ratio <= i_maxSurfaceRatioCirclesRectangle)
 	{
 		tooManyParticles = false;
@@ -326,14 +344,16 @@ void Simulation::calcDeltaTime(const std::vector<GasParticle>& gasParticleContai
 			minRadius = particle.radius;
 		}
 	}
-	// 2.0F sollten einstellbar sein, ist ein Puffer um deltaTime klein zu halten
+	// t = x / v
+	// a particle with v velocity should be not able to go more then delta radius
+	// 2.0F ist an extra threshold to allow even smaller steps
 	deltaTime =  (minRadius*m_deltaRadiustoRadius)/ (2.0F* std::sqrt(maxVelSqrd));
 }
 
 void Simulation::runSimulation(const float totalTime)
 {
 	// set sfml parameters
-	sf::RenderWindow window(sf::VideoMode(200, 200), "Ideal Gas 2D by Fatih Turan");
+	sf::RenderWindow window(sf::VideoMode(2.0*m_worldSideLength, 2.0 * m_worldSideLength), "Ideal Gas 2D by Fatih Turan");
 	sf::Event event;
 	//window.setFramerateLimit(24);
 	std::vector<sf::CircleShape> visualGasContainer(gasParticleContainer.size());

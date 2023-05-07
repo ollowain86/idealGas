@@ -8,7 +8,7 @@ class Simulation
 {
 public:
 
-	bool surfaceCheck(const float i_totalNumPart, const float i_maxSurfaceRatioCirclesRectangle, const float i_worldSideLength, const float i_particleRadius, const float i_deltaRadiustoRadius);
+	bool surfaceCheck(const uint32_t i_totalNumPart, const float i_maxSurfaceRatioCirclesRectangle, const float i_worldSideLength, const float i_particleRadius, const float i_deltaRadiustoRadius);
 
 	bool initSimulation(const uint32_t i_totalNumPart, const float i_worldSideLength, const float i_binSize, const float i_deltaRadiustoRadius, const float i_particleRadius, const float i_maxSurfaceRatioCirclesRectangle);
 
@@ -42,6 +42,8 @@ public:
 	void calcElasticCollisionWithWall(GasParticle& particle_i);
 
 	void calcDeltaTime(const std::vector<GasParticle>& gasParticleContainer, float & deltaTime);
+
+	void reDistributePos(GasParticle & tmp_particle, const std::vector<GasParticle>& gasParticleContainer, const float i_deltaRadiustoRadius);
 
 	float m_worldSideLength = 0.0F;
 	float m_halfWorldSideLength = 0.0F;

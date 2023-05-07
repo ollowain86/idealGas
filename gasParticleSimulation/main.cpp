@@ -5,9 +5,9 @@
 
 int main()
 {
-	const uint32_t totalNumPart = 10U;
-	const float worldSideLength = 100.0F;
-	const float deltaRadiustoRadius = 0.01;
+	const uint32_t totalNumPart = 1000U;
+	const float worldSideLength = 500.0F;
+	const float deltaRadiustoRadius = 0.01; //(delta-radius / radius)
 	const float particleRadius = 5.0F;
 	const float totalTime = 1.0F;
 	const float maxSurfaceRatioCirclesRectangle = 0.4; // circle to surface max ~0.8 (80%)
