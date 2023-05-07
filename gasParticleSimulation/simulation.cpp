@@ -348,6 +348,7 @@ void Simulation::calcDeltaTime(const std::vector<GasParticle>& gasParticleContai
 	// a particle with v velocity should be not able to go more then delta radius
 	// 2.0F ist an extra threshold to allow even smaller steps
 	deltaTime =  (minRadius*m_deltaRadiustoRadius)/ (2.0F* std::sqrt(maxVelSqrd));
+	std::cout << "max dx = " << deltaTime * std::sqrt(maxVelSqrd) << std::endl;
 }
 
 void Simulation::runSimulation(const float totalTime)
@@ -358,6 +359,11 @@ void Simulation::runSimulation(const float totalTime)
 	//window.setFramerateLimit(24);
 	std::vector<sf::CircleShape> visualGasContainer(gasParticleContainer.size());
 	float deltaTime = -1.0F;
+
+	float fps;
+	sf::Clock clock = sf::Clock::Clock();
+	sf::Time previousTime = clock.getElapsedTime();
+	sf::Time currentTime;
 
 	while (window.isOpen())
 	{
@@ -381,6 +387,10 @@ void Simulation::runSimulation(const float totalTime)
 				window.draw(visualGasContainer[i]);
 			}
 			window.display();
+			currentTime = clock.getElapsedTime();
+			fps = 1.0f / (currentTime.asSeconds() - previousTime.asSeconds()); // the asSeconds returns a float
+			std::cout << "fps =" << floor(fps) << std::endl; // flooring it will make the frame rate a rounded number
+			previousTime = currentTime;
 			window.clear();
 			// calc fastest particle and determine new deltaTime - in each round
 			calcDeltaTime(gasParticleContainer, deltaTime);
