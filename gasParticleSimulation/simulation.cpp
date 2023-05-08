@@ -46,7 +46,7 @@ void Simulation::distributeParticle2D(std::vector<GasParticle> & gasParticleCont
 	std::uniform_real_distribution<> disPos(-m_worldSideLength / 2.0, m_worldSideLength / 2.0);
 	std::uniform_real_distribution<> disVel(-1.0, 1.0);
 	float xVal, yVal;
-
+	float velScalar;
 	for (size_t i = 0; i < i_totalNumPart; i++)
 	{
 		xVal = static_cast<float>(disPos(gen));
@@ -57,7 +57,8 @@ void Simulation::distributeParticle2D(std::vector<GasParticle> & gasParticleCont
 		yVal = static_cast<float>(disVel(gen));
 		// ToDo what should be vel? Here it depends on the world size
 		velStruct vel{ xVal * m_worldSideLength / 10.0f, yVal * m_worldSideLength / 10.0f };
-		GasParticle tmp_particle{ 1.0, i_particleRadius, i_particleRadius * i_deltaRadiustoRadius, vel, pos };
+		velScalar = std::sqrt((vel.xVal * vel.xVal) + (vel.yVal * vel.yVal));
+		GasParticle tmp_particle{ 1.0, i_particleRadius, i_particleRadius * i_deltaRadiustoRadius, vel, pos, velScalar};
 		gasParticleContainer.push_back(tmp_particle);
 	}
 
@@ -328,27 +329,13 @@ void Simulation::printVelDistr(const std::vector<float> & velDistrArray)
 
 void Simulation::calcDeltaTime(const std::vector<GasParticle>& gasParticleContainer, float & deltaTime)
 {
-	float maxVelSqrd = -1.0;
-	float minRadius = std::numeric_limits<float>::max();
-	float velSqrd = -1.0;
-	for (const auto & particle : gasParticleContainer)
-	{
-		// calc v^2_scalar
-		velSqrd = (particle.vel.xVal * particle.vel.xVal) + (particle.vel.yVal * particle.vel.yVal);
-		if (maxVelSqrd < velSqrd)
-		{
-			maxVelSqrd = velSqrd;
-		}
-		if (minRadius > particle.radius)
-		{
-			minRadius = particle.radius;
-		}
-	}
+	auto fastestParticle = std::max_element(gasParticleContainer.begin(), gasParticleContainer.end(), [](const GasParticle& particleA, const GasParticle& particleB) {return particleA.velScalar < particleB.velScalar; });
+	auto smallestParticle = std::min_element(gasParticleContainer.begin(), gasParticleContainer.end(), [](const GasParticle& particleA, const GasParticle& particleB) {return particleA.radius < particleB.radius; });
 	// t = x / v
 	// a particle with v velocity should be not able to go more then delta radius
 	// 2.0F ist an extra threshold to allow even smaller steps
-	deltaTime =  (minRadius*m_deltaRadiustoRadius)/ (2.0F* std::sqrt(maxVelSqrd));
-	std::cout << "max dx = " << deltaTime * std::sqrt(maxVelSqrd) << std::endl;
+	deltaTime =  ((*smallestParticle).radius *m_deltaRadiustoRadius)/ (2.0F* (*fastestParticle).velScalar);
+	std::cout << "max dx = " << deltaTime * std::sqrt((*fastestParticle).velScalar) << std::endl;
 }
 
 void Simulation::runSimulation(const float totalTime)
