@@ -1,6 +1,5 @@
 #include <iostream>
 #include "GasParticle.h"
-#include "WorldClass.h"
 #include "simulation.h"
 
 int main()

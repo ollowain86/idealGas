@@ -4,6 +4,7 @@
 #include <vector>
 #include "simulation.h"
 #include "GasParticle.h"
+#include "SimStateCalc.h"
 #include <cmath>
 #include <algorithm>
 #include <SFML/Graphics.hpp>
@@ -334,7 +335,7 @@ void Simulation::calcDeltaTime(const std::vector<GasParticle>& gasParticleContai
 	// t = x / v
 	// a particle with v velocity should be not able to go more then delta radius
 	// 2.0F ist an extra threshold to allow even smaller steps
-	deltaTime =  ((*smallestParticle).radius *m_deltaRadiustoRadius)/ (2.0F* (*fastestParticle).velScalar);
+	deltaTime =  ((*smallestParticle).radius * m_deltaRadiustoRadius)/ (2.0F* (*fastestParticle).velScalar);
 	std::cout << "max dx = " << deltaTime * std::sqrt((*fastestParticle).velScalar) << std::endl;
 }
 
@@ -352,17 +353,17 @@ void Simulation::runSimulation(const float totalTime)
 	sf::Time previousTime = clock.getElapsedTime();
 	sf::Time currentTime;
 
+	SimStateCalc simStateCalc;
+
 	while (window.isOpen())
 	{
 		while (window.pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed)
 			{
-
 				window.close();
 			}
 		}
-		// ToDo include again initial deltaTime calc
 		// calc fastest particle and determine new deltaTime - initially
 		calcDeltaTime(gasParticleContainer, deltaTime);
 		for (float t = 0; t < totalTime; t+=deltaTime)
@@ -374,10 +375,14 @@ void Simulation::runSimulation(const float totalTime)
 				window.draw(visualGasContainer[i]);
 			}
 			window.display();
+		
 			currentTime = clock.getElapsedTime();
 			fps = 1.0f / (currentTime.asSeconds() - previousTime.asSeconds()); // the asSeconds returns a float
 			std::cout << "fps =" << floor(fps) << std::endl; // flooring it will make the frame rate a rounded number
 			previousTime = currentTime;
+
+			simStateCalc.totalEnergyCalc(gasParticleContainer);
+
 			window.clear();
 			// calc fastest particle and determine new deltaTime - in each round
 			calcDeltaTime(gasParticleContainer, deltaTime);
