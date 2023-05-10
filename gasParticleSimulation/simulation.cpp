@@ -125,7 +125,7 @@ float Simulation::vecLengthsCalc2d(vec2d & vec)
 float Simulation::scalarProduct2d(vec2d& vec1, vec2d& vec2)
 {
 	// a1*b1+a2*b2
-	return (vec1.xVal*vec2.xVal+ vec1.yVal * vec2.yVal);
+	return (vec1.xVal*vec2.xVal+ vec1.yVal*vec2.yVal);
 }
 
 void Simulation::calcElasticCollision(GasParticle& firstGasParticle, GasParticle& secondGasParticle)
