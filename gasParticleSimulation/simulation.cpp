@@ -2,11 +2,12 @@
 #include <iostream>
 #include <random>
 #include <vector>
-#include "simulation.h"
+#include "Simulation.h"
 #include "GasParticle.h"
 #include "SimStateCalc.h"
 #include <cmath>
 #include <algorithm>
+#include <chrono>
 #include <SFML/Graphics.hpp>
 
 std::vector<GasParticle> gasParticleContainer;
@@ -368,12 +369,15 @@ void Simulation::runSimulation(const float totalTime)
 		calcDeltaTime(gasParticleContainer, deltaTime);
 		for (float t = 0; t < totalTime; t+=deltaTime)
 		{
+			auto start = std::chrono::steady_clock::now();
 			for (size_t i = 0; i < visualGasContainer.size(); i++) // draw loop
 			{
 				visualGasContainer[i].setPosition(gasParticleContainer[i].pos.xVal+m_halfWorldSideLength, gasParticleContainer[i].pos.yVal+ m_halfWorldSideLength);
 				visualGasContainer[i].setRadius(gasParticleContainer[i].radius);
 				window.draw(visualGasContainer[i]);
 			}
+			auto end = std::chrono::steady_clock::now();
+			std::cout << "SetCircles for draw time in ms: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << std::endl;
 			window.display();
 		
 			currentTime = clock.getElapsedTime();
@@ -389,7 +393,10 @@ void Simulation::runSimulation(const float totalTime)
 			// move particle if deltaTime > 0.0F
 			if (deltaTime > 0.0F)
 			{
+				start = std::chrono::steady_clock::now();
 				moveParticle(gasParticleContainer, deltaTime);
+				end = std::chrono::steady_clock::now();
+				std::cout << "Move particles time in ms: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << std::endl;
 			}
 			else
 			{

@@ -147,13 +147,13 @@
   <ItemGroup>
     <ClCompile Include="GasParticle.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="simulation.cpp" />
-    <ClCompile Include="WorldClass.cpp" />
+    <ClCompile Include="SimStateCalc.cpp" />
+    <ClCompile Include="Simulation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GasParticle.h" />
-    <ClInclude Include="simulation.h" />
-    <ClInclude Include="WorldClass.h" />
+    <ClInclude Include="SimStateCalc.h" />
+    <ClInclude Include="Simulation.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
